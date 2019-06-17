@@ -1,5 +1,13 @@
 <?php
 
+function loadTemplate($template, $variables)
+{
+  extract($variables);
+  ob_start();
+  include __DIR__ . $template;
+  return ob_get_clean();
+}
+
 try {
   include __DIR__ . '/config/connection.php';
   include __DIR__ . '/classes/DatabaseTable.php';
@@ -12,7 +20,12 @@ try {
   $page = $todoController->$action();
 
   $title = $page['title'];
-  $output = $page['output'];
+
+  if (isset($page['template']) && isset($page['variables'])) {
+    $output = loadTemplate($page['template'], $page['variables']);
+  } else {
+    $output = $page['output'];
+  }
 }
 catch (PDOException $e) {
   $title = 'TODO APP | Error';

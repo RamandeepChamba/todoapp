@@ -17,16 +17,19 @@ class TodoController
     // Display view
     if (count($todos)) {
       // Show Todos
-      ob_start();
-      include __DIR__ . '/../templates/showTodos.html.php';
-      $output = ob_get_clean();
       $title = 'TODO APP | TODOS';
     } else {
       // No Todos
       $output = '<h1>No TODOS</h1>';
       $title = 'TODO APP | No TODOS';
+      return ['title' => $title, 'output' => $output];
     }
-    return ['title' => $title, 'output' => $output];
+    return ['title' => $title,
+      'template' => '/templates/showTodos.html.php',
+      'variables' => [
+        'todos' => $todos ?? []
+      ]
+    ];
   }
 
   // Home
@@ -51,10 +54,12 @@ class TodoController
       $msg = 'Permission denied!';
     }
     // Return output
-    ob_start();
-    include __DIR__ . '/../inc/redirect.php';
-    $output = ob_get_clean();
-    return ['title' => 'Redirecting...', 'output' => $output];
+    return ['title' => 'Redirecting...',
+      'template' => '/inc/redirect.php',
+      'variables' => [
+        'msg' => $msg
+      ]
+    ];
   }
 
   // Edit
@@ -68,16 +73,14 @@ class TodoController
         // Check if a todo is fetched
         if (isset($todo['id'])) {
           $title = 'TODO APP | Edit Todo';
-          ob_start();
-          include __DIR__ . '/../templates/todoForm.html.php';
-          $output = ob_get_clean();
+          $template = '/templates/todoForm.html.php';
         } else {
           $title = 'TODO APP | Error';
           $msg = 'Permission denied!';
-          ob_start();
-          include __DIR__ . '/../inc/redirect.php';
-          $output = ob_get_clean();
+          $template = '/inc/redirect.php';
+          $variables = ['msg' => $msg];
         }
+        $variables['todo'] = $todo;
       }
       // POST todo
       else {
@@ -100,21 +103,24 @@ class TodoController
             $url = '/todoapp/index.php?action=edit';
           }
         }
-        ob_start();
-        include __DIR__ . '/../inc/redirect.php';
-        $output = ob_get_clean();
+        $template = '/inc/redirect.php';
+        $variables = [
+          'msg' => $msg,
+          'url' => $url ?? NULL
+        ];
       }
     }
 
     // GET add form
     else {
       $title = 'TODO APP | Add Todo';
-      ob_start();
-      include __DIR__ . '/../templates/todoForm.html.php';
-      $output = ob_get_clean();
+      $template = '/templates/todoForm.html.php';
     }
 
     // Return output
-    return ['title' => $title, 'output' => $output];
+    return ['title' => $title,
+      'template' => $template,
+      'variables' => $variables ?? []
+    ];
   }
 }
