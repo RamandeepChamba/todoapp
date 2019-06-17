@@ -1,37 +1,19 @@
 <?php
 
-function loadTemplate($template, $variables)
-{
-  extract($variables);
-  ob_start();
-  include __DIR__ . $template;
-  return ob_get_clean();
-}
-
 try {
-  include __DIR__ . '/config/connection.php';
-  include __DIR__ . '/classes/DatabaseTable.php';
-  include __DIR__ . '/controllers/TodoController.php';
+  include __DIR__ . '/classes/EntryPoint.php';
 
-  $todosTable = new DatabaseTable($pdo, 'todos', 'id');
-  $todoController = new TodoController($todosTable);
+  $route = ltrim(strtok($_SERVER['REQUEST_URI'], '?'), '/');
+  $route = str_replace('todoapp/', '', $route);
 
-  $action = $_GET['action'] ?? 'home';
-  $page = $todoController->$action();
-
-  $title = $page['title'];
-
-  if (isset($page['template']) && isset($page['variables'])) {
-    $output = loadTemplate($page['template'], $page['variables']);
-  } else {
-    $output = $page['output'];
-  }
+  $entryPoint = new EntryPoint($route);
+  $entryPoint->run();
 }
 catch (PDOException $e) {
   $title = 'TODO APP | Error';
   $output =
     $e->getMessage() . ' in ' .
     $e->getFile() . ':' . $e->getLine();
-}
 
-include __DIR__ . '/templates/layout.html.php';
+  include __DIR__ . '/../templates/layout.html.php';
+}

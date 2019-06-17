@@ -18,14 +18,14 @@
       </p>
       <div class="todo-buttons" style="display: flex; flex-basis: 30%;">
         <!-- Edit -->
-        <form action="/todoapp/index.php?action=edit" method="post"
+        <form action="/todoapp/todo/edit" method="post"
           style="margin: 0 10px;">
           <input type="hidden" name="todo[id]" value="<?=$todo['id']?>">
           <input type="submit" name="edit"
             value="Edit" style="padding: 8px;">
         </form>
         <!-- Delete -->
-        <form action="/todoapp/index.php?action=delete" method="post">
+        <form action="/todoapp/todo/delete" method="post">
           <input type="hidden" name="id" value="<?=$todo['id']?>">
           <input type="submit" name="delete"
             value="Delete" style="padding: 8px;">

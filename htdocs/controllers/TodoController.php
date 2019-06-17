@@ -25,7 +25,7 @@ class TodoController
       return ['title' => $title, 'output' => $output];
     }
     return ['title' => $title,
-      'template' => '/templates/showTodos.html.php',
+      'template' => '/../templates/showTodos.html.php',
       'variables' => [
         'todos' => $todos ?? []
       ]
@@ -55,7 +55,7 @@ class TodoController
     }
     // Return output
     return ['title' => 'Redirecting...',
-      'template' => '/inc/redirect.php',
+      'template' => '/../inc/redirect.php',
       'variables' => [
         'msg' => $msg
       ]
@@ -73,11 +73,11 @@ class TodoController
         // Check if a todo is fetched
         if (isset($todo['id'])) {
           $title = 'TODO APP | Edit Todo';
-          $template = '/templates/todoForm.html.php';
+          $template = '/../templates/todoForm.html.php';
         } else {
           $title = 'TODO APP | Error';
           $msg = 'Permission denied!';
-          $template = '/inc/redirect.php';
+          $template = '/../inc/redirect.php';
           $variables = ['msg' => $msg];
         }
         $variables['todo'] = $todo;
@@ -92,21 +92,24 @@ class TodoController
             $msg = 'Todo added!';
           } else {
             $title = 'TODO APP | Error';
+            $errCode = 409;
             $msg = 'Failed to add Todo!';
           }
         }
         else {
           $title = 'TODO APP | Error';
+          $errCode = 400;
           $msg = 'Invalid input!';
           // Redirect to add form
           if ($_POST['todo']['id'] == '') {
-            $url = '/todoapp/index.php?action=edit';
+            $url = '/todoapp/todo/edit';
           }
         }
-        $template = '/inc/redirect.php';
+        $template = '/../inc/redirect.php';
         $variables = [
           'msg' => $msg,
-          'url' => $url ?? NULL
+          'url' => $url ?? NULL,
+          'errCode'=> $errCode ?? 200
         ];
       }
     }
@@ -114,7 +117,7 @@ class TodoController
     // GET add form
     else {
       $title = 'TODO APP | Add Todo';
-      $template = '/templates/todoForm.html.php';
+      $template = '/../templates/todoForm.html.php';
     }
 
     // Return output
