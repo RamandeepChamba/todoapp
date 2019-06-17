@@ -8,13 +8,9 @@ try {
   $todosTable = new DatabaseTable($pdo, 'todos', 'id');
   $todoController = new TodoController($todosTable);
 
-  if (isset($_GET['edit'])) {
-    $page = $todoController->edit();
-  } elseif (isset($_GET['delete'])) {
-    $page = $todoController->delete();
-  } else {
-    $page = $todoController->home();
-  }
+  $action = $_GET['action'] ?? 'home';
+  $page = $todoController->$action();
+
   $title = $page['title'];
   $output = $page['output'];
 }

@@ -95,6 +95,10 @@ class TodoController
         else {
           $title = 'TODO APP | Error';
           $msg = 'Invalid input!';
+          // Redirect to add form
+          if ($_POST['todo']['id'] == '') {
+            $url = '/todoapp/index.php?action=edit';
+          }
         }
         ob_start();
         include __DIR__ . '/../inc/redirect.php';
