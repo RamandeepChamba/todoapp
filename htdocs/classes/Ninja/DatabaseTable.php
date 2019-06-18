@@ -1,4 +1,5 @@
 <?php
+namespace Ninja;
 
 class DatabaseTable
 {
@@ -7,7 +8,7 @@ class DatabaseTable
   private $table;
   private $primaryKey;
 
-  public function __construct(PDO $pdo, string $table, string $primaryKey)
+  public function __construct(\PDO $pdo, string $table, string $primaryKey)
   {
     $this->pdo = $pdo;
     $this->table = $table;
@@ -89,7 +90,7 @@ class DatabaseTable
       }
       return $this->insert($fields);
     }
-    catch (PDOException $e) {
+    catch (\PDOException $e) {
       return $this->update($fields);
     }
   }

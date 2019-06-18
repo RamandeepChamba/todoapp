@@ -1,6 +1,8 @@
 <?php
+namespace Tdb\Controllers;
+use \Ninja\DatabaseTable;
 
-class TodoController
+class Todo
 {
   private $todosTable;
 
@@ -25,7 +27,7 @@ class TodoController
       return ['title' => $title, 'output' => $output];
     }
     return ['title' => $title,
-      'template' => '/../templates/showTodos.html.php',
+      'template' => '/../../templates/showTodos.html.php',
       'variables' => [
         'todos' => $todos ?? []
       ]
@@ -55,7 +57,7 @@ class TodoController
     }
     // Return output
     return ['title' => 'Redirecting...',
-      'template' => '/../inc/redirect.php',
+      'template' => '/../../includes/redirect.php',
       'variables' => [
         'msg' => $msg
       ]
@@ -73,11 +75,11 @@ class TodoController
         // Check if a todo is fetched
         if (isset($todo['id'])) {
           $title = 'TODO APP | Edit Todo';
-          $template = '/../templates/todoForm.html.php';
+          $template = '/../../templates/todoForm.html.php';
         } else {
           $title = 'TODO APP | Error';
           $msg = 'Permission denied!';
-          $template = '/../inc/redirect.php';
+          $template = '/../../includes/redirect.php';
           $variables = ['msg' => $msg];
         }
         $variables['todo'] = $todo;
@@ -105,7 +107,7 @@ class TodoController
             $url = '/todoapp/todo/edit';
           }
         }
-        $template = '/../inc/redirect.php';
+        $template = '/../../includes/redirect.php';
         $variables = [
           'msg' => $msg,
           'url' => $url ?? NULL,
@@ -117,7 +119,7 @@ class TodoController
     // GET add form
     else {
       $title = 'TODO APP | Add Todo';
-      $template = '/../templates/todoForm.html.php';
+      $template = '/../../templates/todoForm.html.php';
     }
 
     // Return output

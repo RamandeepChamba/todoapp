@@ -1,4 +1,5 @@
 <?php
+namespace Ninja;
 
 class EntryPoint
 {
@@ -37,6 +38,6 @@ class EntryPoint
     } else {
       $output = $page['output'];
     }
-    include __DIR__ . '/../templates/layout.html.php';
+    include __DIR__ . '/../../templates/layout.html.php';
   }
 }
