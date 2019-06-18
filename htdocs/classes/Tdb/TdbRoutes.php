@@ -1,9 +1,10 @@
 <?php
 namespace Tdb;
 use \Ninja\DatabaseTable;
+use \Ninja\Routes;
 use \Tdb\Controllers\Todo;
 
-class TdbRoutes
+class TdbRoutes implements Routes
 {
   public function getRoutes()
   {
