@@ -4,9 +4,10 @@ class EntryPoint
 {
   private $route;
 
-  public function __construct($route)
+  public function __construct($route, $routes)
   {
     $this->route = $route;
+    $this->routes = $routes;
     $this->checkUrl();
   }
 
@@ -26,36 +27,9 @@ class EntryPoint
     return ob_get_clean();
   }
 
-  private function callAction()
-  {
-    include __DIR__ . '/../config/connection.php';
-    include __DIR__ . '/DatabaseTable.php';
-
-    $todosTable = new DatabaseTable($pdo, 'todos', 'id');
-
-    // Routing
-    if ($this->route == 'todo/edit') {
-      include __DIR__ . '/../controllers/TodoController.php';
-      $todoController = new TodoController($todosTable);
-      $page = $todoController->edit();
-
-    } elseif ($this->route == 'todo/delete') {
-      include __DIR__ . '/../controllers/TodoController.php';
-      $todoController = new TodoController($todosTable);
-      $page = $todoController->delete();
-
-    } else {
-      include __DIR__ . '/../controllers/TodoController.php';
-      $todoController = new TodoController($todosTable);
-      $page = $todoController->home();
-    }
-
-    return $page;
-  }
-
   public function run()
   {
-    $page = $this->callAction();
+    $page = $this->routes->callAction($this->route);
     $title = $page['title'];
 
     if (isset($page['template']) && isset($page['variables'])) {
