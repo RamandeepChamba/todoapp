@@ -5,26 +5,39 @@ use \Tdb\Controllers\Todo;
 
 class TdbRoutes
 {
-  public function callAction($route)
+  public function getRoutes()
   {
     include __DIR__ . '/../../includes/connection.php';
 
     $todosTable = new DatabaseTable($pdo, 'todos', 'id');
+    $todoController = new Todo($todosTable);
 
     // Routing
-    if ($route == 'todo/edit') {
-      $todoController = new Todo($todosTable);
-      $page = $todoController->edit();
+    $routes = [
+      'todo/edit' => [
+        'POST' => [
+          'controller' => $todoController,
+          'action' => 'saveEdit'
+        ],
+        'GET' => [
+          'controller' => $todoController,
+          'action' => 'edit'
+        ]
+      ],
+      'todo/delete' => [
+        'POST' => [
+          'controller' => $todoController,
+          'action' => 'delete'
+        ]
+      ],
+      '' => [
+        'GET' => [
+          'controller' => $todoController,
+          'action' => 'home'
+        ]
+      ]
+    ];
 
-    } elseif ($route == 'todo/delete') {
-      $todoController = new Todo($todosTable);
-      $page = $todoController->delete();
-
-    } else {
-      $todoController = new Todo($todosTable);
-      $page = $todoController->home();
-    }
-
-    return $page;
+    return $routes;
   }
 }

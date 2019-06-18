@@ -5,8 +5,10 @@ try {
 
   $route = ltrim(strtok($_SERVER['REQUEST_URI'], '?'), '/');
   $route = str_replace('todoapp/', '', $route);
-
-  $entryPoint = new \Ninja\EntryPoint($route, new \Tdb\TdbRoutes());
+  $entryPoint = new \Ninja\EntryPoint(
+    $route, 
+    $_SERVER['REQUEST_METHOD'],
+    new \Tdb\TdbRoutes());
   $entryPoint->run();
 }
 catch (\PDOException $e) {

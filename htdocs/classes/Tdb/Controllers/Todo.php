@@ -67,59 +67,68 @@ class Todo
   // Edit
   public function edit()
   {
-    if (isset($_POST['todo']['id'])) {
-      // GET edit form
-      if (isset($_POST['edit'])) {
-        // Fetch todo for access to description
-        $todo = $this->todosTable->fetch($_POST['todo']['id']);
-        // Check if a todo is fetched
-        if (isset($todo['id'])) {
-          $title = 'TODO APP | Edit Todo';
-          $template = '/../../templates/todoForm.html.php';
-        } else {
-          $title = 'TODO APP | Error';
-          $msg = 'Permission denied!';
-          $template = '/../../includes/redirect.php';
-          $variables = ['msg' => $msg];
-        }
-        $variables['todo'] = $todo;
-      }
-      // POST todo
-      else {
-        $description = htmlspecialchars(trim($_POST['todo']['description']));
-        if (strlen($description) > 0) {
-          // Add Todo
-          if ($this->todosTable->save($_POST['todo'])) {
-            $title = 'TODO APP | Success';
-            $msg = 'Todo added!';
-          } else {
-            $title = 'TODO APP | Error';
-            $errCode = 409;
-            $msg = 'Failed to add Todo!';
-          }
-        }
-        else {
-          $title = 'TODO APP | Error';
-          $errCode = 400;
-          $msg = 'Invalid input!';
-          // Redirect to add form
-          if ($_POST['todo']['id'] == '') {
-            $url = '/todoapp/todo/edit';
-          }
-        }
+    // GET edit form
+    $id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : NULL;
+    if ($id) {
+      // Fetch todo for access to description
+      $todo = $this->todosTable->fetch($id);
+      // Check if a todo is fetched
+      if (isset($todo['id'])) {
+        $title = 'TODO APP | Edit Todo';
+        $template = '/../../templates/todoForm.html.php';
+      } else {
+        $title = 'TODO APP | Error';
+        $msg = 'Permission denied!';
         $template = '/../../includes/redirect.php';
-        $variables = [
-          'msg' => $msg,
-          'url' => $url ?? NULL,
-          'errCode'=> $errCode ?? 200
-        ];
+        $variables = ['msg' => $msg];
       }
-    }
+      $variables['todo'] = $todo;
 
-    // GET add form
-    else {
+    } else {
+      // Get Add form
       $title = 'TODO APP | Add Todo';
       $template = '/../../templates/todoForm.html.php';
+    }
+
+    // Return output
+    return ['title' => $title,
+      'template' => $template,
+      'variables' => $variables ?? []
+    ];
+  }
+
+  // Save Edit
+  public function saveEdit()
+  {
+    if (isset($_POST['todo']['id'])) {
+      // POST todo
+      $description = htmlspecialchars(trim($_POST['todo']['description']));
+      if (strlen($description) > 0) {
+        // Add Todo
+        if ($this->todosTable->save($_POST['todo'])) {
+          $title = 'TODO APP | Success';
+          $msg = 'Todo added!';
+        } else {
+          $title = 'TODO APP | Error';
+          $errCode = 409;
+          $msg = 'Failed to add Todo!';
+        }
+      }
+      else {
+        $title = 'TODO APP | Error';
+        $errCode = 400;
+        $msg = 'Invalid input!';
+        // Redirect to add form
+        if ($_POST['todo']['id'] == '') {
+          $url = '/todoapp/todo/edit';
+        }
+      }
+      $template = '/../../includes/redirect.php';
+      $variables = [
+        'msg' => $msg,
+        'url' => $url ?? NULL,
+        'errCode'=> $errCode ?? 200
+      ];
     }
 
     // Return output

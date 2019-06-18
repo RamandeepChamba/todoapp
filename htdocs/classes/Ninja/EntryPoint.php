@@ -5,9 +5,10 @@ class EntryPoint
 {
   private $route;
 
-  public function __construct($route, $routes)
+  public function __construct(string $route, string $method, \Tdb\TdbRoutes $routes)
   {
     $this->route = $route;
+    $this->method = $method;
     $this->routes = $routes;
     $this->checkUrl();
   }
@@ -30,7 +31,15 @@ class EntryPoint
 
   public function run()
   {
-    $page = $this->routes->callAction($this->route);
+    $routes = $this->routes->getRoutes();
+    // Default to home if route not in routes
+    if (!isset($routes[$this->route])) {
+      $this->route = '';
+      $this->method = 'GET';
+    }
+    $controller = $routes[$this->route][$this->method]['controller'];
+    $action = $routes[$this->route][$this->method]['action'];
+    $page = $controller->$action();
     $title = $page['title'];
 
     if (isset($page['template']) && isset($page['variables'])) {

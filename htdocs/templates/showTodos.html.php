@@ -18,11 +18,10 @@
       </p>
       <div class="todo-buttons" style="display: flex; flex-basis: 30%;">
         <!-- Edit -->
-        <form action="/todoapp/todo/edit" method="post"
+        <form action="/todoapp/todo/edit" method="get"
           style="margin: 0 10px;">
-          <input type="hidden" name="todo[id]" value="<?=$todo['id']?>">
-          <input type="submit" name="edit"
-            value="Edit" style="padding: 8px;">
+          <input type="hidden" name="id" value="<?=$todo['id']?>">
+          <input type="submit" value="Edit" style="padding: 8px;">
         </form>
         <!-- Delete -->
         <form action="/todoapp/todo/delete" method="post">
