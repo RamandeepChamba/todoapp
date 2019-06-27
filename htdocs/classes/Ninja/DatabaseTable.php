@@ -85,7 +85,7 @@ class DatabaseTable
   public function save($fields)
   {
     try {
-      if ($fields[$this->primaryKey] == '') {
+      if (empty($fields[$this->primaryKey])) {
         $fields[$this->primaryKey] = NULL;
       }
       return $this->insert($fields);

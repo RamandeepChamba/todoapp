@@ -27,7 +27,7 @@ class Todo
       return ['title' => $title, 'output' => $output];
     }
     return ['title' => $title,
-      'template' => '/../../templates/showTodos.html.php',
+      'template' => 'showTodos.html.php',
       'variables' => [
         'todos' => $todos ?? []
       ]
@@ -57,7 +57,7 @@ class Todo
     }
     // Return output
     return ['title' => 'Redirecting...',
-      'template' => '/../../includes/redirect.php',
+      'template' => 'redirect.php',
       'variables' => [
         'msg' => $msg
       ]
@@ -75,11 +75,11 @@ class Todo
       // Check if a todo is fetched
       if (isset($todo['id'])) {
         $title = 'TODO APP | Edit Todo';
-        $template = '/../../templates/todoForm.html.php';
+        $template = 'todoForm.html.php';
       } else {
         $title = 'TODO APP | Error';
         $msg = 'Permission denied!';
-        $template = '/../../includes/redirect.php';
+        $template = 'redirect.php';
         $variables = ['msg' => $msg];
       }
       $variables['todo'] = $todo;
@@ -87,7 +87,7 @@ class Todo
     } else {
       // Get Add form
       $title = 'TODO APP | Add Todo';
-      $template = '/../../templates/todoForm.html.php';
+      $template = 'todoForm.html.php';
     }
 
     // Return output
@@ -123,7 +123,7 @@ class Todo
           $url = '/todoapp/todo/edit';
         }
       }
-      $template = '/../../includes/redirect.php';
+      $template = 'redirect.php';
       $variables = [
         'msg' => $msg,
         'url' => $url ?? NULL,
