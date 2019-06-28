@@ -40,6 +40,11 @@ class Register
         $errors[] = $key . ' cannot be empty';
       }
     }
+    // Email validation
+    if (!filter_var($author['email'], FILTER_VALIDATE_EMAIL)) {
+      $errors[] = 'email must be of the form x@x.x';
+    }
+
     // If form valid
     if (empty($errors) && $this->authorsTable->save($author)) {
       header('Location: /todoapp/author/success');
