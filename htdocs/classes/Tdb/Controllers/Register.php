@@ -40,15 +40,26 @@ class Register
         $errors[] = $key . ' cannot be empty';
       }
     }
+
     // Email validation
     if (!filter_var($author['email'], FILTER_VALIDATE_EMAIL)) {
       $errors[] = 'email must be of the form x@x.x';
+    }
+    else {
+      // Convert email to lowercase
+      $author['email'] = strtolower($author['email']);
+      // Check if email available
+      // (not in db already)
+      if ($this->authorsTable->fetchByCol('email', $author['email'])) {
+        $errors[] = 'email already registered';
+      }
     }
 
     // If form valid
     if (empty($errors) && $this->authorsTable->save($author)) {
       header('Location: /todoapp/author/success');
-    } else {
+    }
+    else {
       return [
         'title' => 'Registeration Failed',
         'template' => 'register.html.php',

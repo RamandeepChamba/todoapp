@@ -32,6 +32,15 @@ class DatabaseTable
     return $query->fetch();
   }
 
+  // Fetch all by column with certain value
+  public function fetchByCol($column, $value)
+  {
+    $sql = "SELECT * FROM $this->table WHERE $column = :value";
+    $params = ['value' => $value];
+    $query = $this->query($sql, $params);
+    return $query->fetchAll();
+  }
+
   // Fetch all
   public function fetchAll()
   {
