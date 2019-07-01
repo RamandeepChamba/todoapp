@@ -71,6 +71,16 @@ class Todo
   {
     // Check if valid request
     if (isset($_POST['id'])) {
+      // Fetch current user
+      $author = $this->authentication->getUser();
+      // Fetch todo
+      $todo = $this->todosTable->fetch($_POST['id']);
+      // If user is not the author of this todo
+      if (isset($todo['authorId']) &&
+        $todo['authorId'] !== $author['id']) {
+        return;
+      }
+
       if ($this->todosTable->delete($_POST['id'])) {
         $msg = 'Todo deleted!';
       } else {
@@ -135,6 +145,19 @@ class Todo
         // Add Todo
         $todo = $_POST['todo'];
         $author = $this->authentication->getUser();
+
+        // If we are updating, check that user has permission
+        $resultTodo = $this->todosTable->fetch($todo['id']);
+        // Conditions:
+        // 1. If user is trying to provide custom id
+        // 2. If user is not the author of this todo
+        if (ctype_digit($_POST['todo']['id']) &&
+          !isset($resultTodo['authorId'])
+          || (isset($resultTodo['authorId']) &&
+          $resultTodo['authorId'] !== $author['id'])) {
+          return;
+        }
+
         $todo['authorId'] = $author['id'];
 
         if ($this->todosTable->save($todo)) {
