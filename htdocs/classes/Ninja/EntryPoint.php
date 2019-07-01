@@ -37,20 +37,35 @@ class EntryPoint
       $this->route = '';
       $this->method = 'GET';
     }
-    $controller = $routes[$this->route][$this->method]['controller'];
-    $action = $routes[$this->route][$this->method]['action'];
-    $page = $controller->$action();
-    $title = $page['title'];
 
-    if (isset($page['template'])) {
-      if (isset($page['variables'])) {
-        $output = $this->loadTemplate($page['template'], $page['variables']);
-      } else {
-        $output = $this->loadTemplate($page['template']);
-      }
+    // Display error instead of
+    // pages (that requires login)
+    // if not logged in
+    if (isset($routes[$this->route]['login']) &&
+      !$this->routes->getAuthentication()->isLoggedIn())
+    {
+      header('location: /todoapp/login/error');
+
     } else {
-      $output = $page['output'];
+      $controller = $routes[$this->route][$this->method]['controller'];
+      $action = $routes[$this->route][$this->method]['action'];
+      $page = $controller->$action();
+      $title = $page['title'];
+
+      if (isset($page['template'])) {
+        if (isset($page['variables'])) {
+          $output = $this->loadTemplate($page['template'], $page['variables']);
+        } else {
+          $output = $this->loadTemplate($page['template']);
+        }
+      } else {
+        $output = $page['output'];
+      }
+      echo $this->loadTemplate('layout.html.php', [
+        'loggedIn' => $this->routes->getAuthentication()->isLoggedIn(),
+        'output' => $output,
+        'title' => $title
+      ]);
     }
-    include __DIR__ . '/../../templates/layout.html.php';
   }
 }

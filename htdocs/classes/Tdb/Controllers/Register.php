@@ -1,6 +1,6 @@
 <?php
 namespace Tdb\Controllers;
-use \Ninja\DatabaseTable;
+use Ninja\DatabaseTable;
 
 class Register
 {
@@ -56,7 +56,13 @@ class Register
     }
 
     // If form valid
-    if (empty($errors) && $this->authorsTable->save($author)) {
+    if (empty($errors)) {
+      // Encrypt password
+      $author['password'] = password_hash($author['password'], PASSWORD_DEFAULT);
+
+      // Save author to db
+      $this->authorsTable->save($author);
+      // Redirect
       header('Location: /todoapp/author/success');
     }
     else {

@@ -1,35 +1,59 @@
 <?php
 namespace Tdb\Controllers;
 use \Ninja\DatabaseTable;
+use \Ninja\Authentication;
 
 class Todo
 {
   private $todosTable;
+  private $authentication;
 
-  public function __construct(DatabaseTable $todosTable)
+  public function __construct(DatabaseTable $todosTable,
+    DatabaseTable $authorsTable,
+    Authentication $authentication)
   {
     $this->todosTable = $todosTable;
+    $this->authorsTable = $authorsTable;
+    $this->authentication = $authentication;
   }
 
   // List
   private function list()
   {
     // Fetch all Todos from db
-    $todos = $this->todosTable->fetchAll();
+    $result = $this->todosTable->fetchAll();
+    $todos = [];
+
     // Display view
-    if (count($todos)) {
+    if (count($result)) {
+      foreach ($result as $todo) {
+        $author = $this->authorsTable->fetch($todo['authorId']);
+        $todo['name'] = $author['name'];
+        $todo['email'] = $author['email'];
+
+        $todos[] = array_merge($todo, [
+          'name' => $author['name'],
+          'email' => $author['email'],
+          'authorId' => $author['id'],
+        ]);
+      }
       // Show Todos
       $title = 'TODO APP | TODOS';
+
     } else {
       // No Todos
       $output = '<h1>No TODOS</h1>';
       $title = 'TODO APP | No TODOS';
       return ['title' => $title, 'output' => $output];
     }
+
+    $author = $this->authentication->getUser();
+
     return ['title' => $title,
       'template' => 'showTodos.html.php',
       'variables' => [
-        'todos' => $todos ?? []
+        'todos' => $todos,
+        'userId' => $author['id'] ?? null
       ]
     ];
   }
@@ -67,6 +91,9 @@ class Todo
   // Edit
   public function edit()
   {
+    // Get current user
+    $author = $this->authentication->getUser();
+
     // GET edit form
     $id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : NULL;
     if ($id) {
@@ -76,6 +103,7 @@ class Todo
       if (isset($todo['id'])) {
         $title = 'TODO APP | Edit Todo';
         $template = 'todoForm.html.php';
+        $variables['userId'] = $author['id'];
       } else {
         $title = 'TODO APP | Error';
         $msg = 'Permission denied!';
@@ -105,7 +133,11 @@ class Todo
       $description = htmlspecialchars(trim($_POST['todo']['description']));
       if (strlen($description) > 0) {
         // Add Todo
-        if ($this->todosTable->save($_POST['todo'])) {
+        $todo = $_POST['todo'];
+        $author = $this->authentication->getUser();
+        $todo['authorId'] = $author['id'];
+
+        if ($this->todosTable->save($todo)) {
           $title = 'TODO APP | Success';
           $msg = 'Todo added!';
         } else {

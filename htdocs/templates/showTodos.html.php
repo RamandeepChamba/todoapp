@@ -9,6 +9,10 @@
       <p class="todo-description" style="flex-basis: 70%;
         letter-spacing: .6px;">
         <?=$todo['description']?><br>
+        <em>By: </em>
+        <em style="font-size: 90%; color: #444;">
+          <?=$todo['name']?>, <?=$todo['email']?>
+        </em><br>
         <em style="font-size: 90%; color: #444;">
           <?php
             $date = new DateTime($todo['created_at']);
@@ -16,20 +20,23 @@
           ?>
         </em>
       </p>
-      <div class="todo-buttons" style="display: flex; flex-basis: 30%;">
-        <!-- Edit -->
-        <form action="/todoapp/todo/edit" method="get"
-          style="margin: 0 10px;">
-          <input type="hidden" name="id" value="<?=$todo['id']?>">
-          <input type="submit" value="Edit" style="padding: 8px;">
-        </form>
-        <!-- Delete -->
-        <form action="/todoapp/todo/delete" method="post">
-          <input type="hidden" name="id" value="<?=$todo['id']?>">
-          <input type="submit" name="delete"
-            value="Delete" style="padding: 8px;">
-        </form>
-      </div>
+      <!-- If joke belongs to the logged in user, display buttons -->
+      <?php if ($userId == $todo['authorId']) { ?>
+        <div class="todo-buttons" style="display: flex; flex-basis: 30%;">
+          <!-- Edit -->
+          <form action="/todoapp/todo/edit" method="get"
+            style="margin: 0 10px;">
+            <input type="hidden" name="id" value="<?=$todo['id']?>">
+            <input type="submit" value="Edit" style="padding: 8px;">
+          </form>
+          <!-- Delete -->
+          <form action="/todoapp/todo/delete" method="post">
+            <input type="hidden" name="id" value="<?=$todo['id']?>">
+            <input type="submit" name="delete"
+              value="Delete" style="padding: 8px;">
+          </form>
+        </div>
+      <?php }; ?>
     </blockquote>
     <hr style="border: 1px solid #ddd;">
   <?php }; ?>

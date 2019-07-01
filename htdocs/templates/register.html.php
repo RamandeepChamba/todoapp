@@ -24,6 +24,5 @@
   <input name="author[password]" id="password"
     type="password" value="<?=$author['password'] ?? ''?>">
 
-  <input type="submit" name="submit"
-    value="Register">
+  <input type="submit" name="register" value="Register">
 </form>

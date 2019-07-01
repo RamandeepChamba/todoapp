@@ -1,20 +1,36 @@
 <?php
 namespace Tdb;
+use \Ninja\Authentication;
 use \Ninja\DatabaseTable;
 use \Ninja\Routes;
-use \Tdb\Controllers\Todo;
+use \Tdb\Controllers\Login;
 use \Tdb\Controllers\Register;
+use \Tdb\Controllers\Todo;
 
 class TdbRoutes implements Routes
 {
-  public function getRoutes()
+
+  private $todosTable;
+  private $authorsTable;
+  private $authentication;
+
+  public function __construct()
   {
     include __DIR__ . '/../../includes/connection.php';
 
-    $todosTable = new DatabaseTable($pdo, 'todos', 'id');
-    $authorsTable = new DatabaseTable($pdo, 'author', 'id');
-    $todoController = new Todo($todosTable);
-    $authorsController = new Register($authorsTable);
+    $this->todosTable = new DatabaseTable($pdo, 'todos', 'id');
+    $this->authorsTable = new DatabaseTable($pdo, 'authors', 'id');
+    $this->authentication = new Authentication(
+      $this->authorsTable, 'email', 'password'
+    );
+  }
+
+  public function getRoutes(): array
+  {
+    $todoController = new Todo($this->todosTable,
+      $this->authorsTable, $this->authentication);
+    $authorsController = new Register($this->authorsTable);
+    $loginController = new Login($this->authentication);
 
     // Routing
     $routes = [
@@ -35,11 +51,29 @@ class TdbRoutes implements Routes
           'action' => 'success'
         ]
       ],
-      'author/failure' => [
+      // Login
+      'login' => [
         'GET' => [
-          'controller' => $authorsController,
-          'action' => 'failure'
+          'controller' => $loginController,
+          'action' => 'loginForm'
+        ],
+        'POST' => [
+          'controller' => $loginController,
+          'action' => 'login'
         ]
+      ],
+      'login/error' => [
+        'GET' => [
+          'controller' => $loginController,
+          'action' => 'error'
+        ]
+      ],
+      'logout' => [
+        'GET' => [
+          'controller' => $loginController,
+          'action' => 'logout'
+        ],
+        'login' => true
       ],
       // Todo
       'todo/edit' => [
@@ -50,13 +84,15 @@ class TdbRoutes implements Routes
         'GET' => [
           'controller' => $todoController,
           'action' => 'edit'
-        ]
+        ],
+        'login' => true
       ],
       'todo/delete' => [
         'POST' => [
           'controller' => $todoController,
           'action' => 'delete'
-        ]
+        ],
+        'login' => true
       ],
       '' => [
         'GET' => [
@@ -67,5 +103,10 @@ class TdbRoutes implements Routes
     ];
 
     return $routes;
+  }
+
+  public function getAuthentication(): Authentication
+  {
+    return $this->authentication;
   }
 }
